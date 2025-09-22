@@ -1,0 +1,16 @@
+# Python cache 
+__pycache__/ 
+*.pyc 
+ 
+# Database 
+f1.db 
+ 
+# CSV datasets 
+datasets/ 
+ 
+# Generated outputs 
+charts/ 
+exports/ 
+ 
+# VS Code settings 
+.vscode/ 
