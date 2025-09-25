@@ -93,5 +93,6 @@ python analytics.py
 
 ##  Автор
 
-👩‍💻 Aruzhan Saparkhankyzy  
-📧 [231768@astanait.edu.kz]
+Aruzhan Saparkhankyzy  
+[231768@astanait.edu.kz]
+
