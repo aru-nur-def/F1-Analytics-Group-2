@@ -17,14 +17,14 @@ F1-Analytics-Group/
 └── README.md # Документация
 
 
-## ⚡ Установка и запуск
+##  Установка и запуск
 
 1. Клонировать репозиторий:
 ```bash
 git clone https://github.com/username/F1-Analytics-Group.git
 cd F1-Analytics-Group
 
-📊 Возможности
+##  Возможности
 
 Построение графиков: pie, bar, line, histogram, scatter
 
@@ -34,12 +34,12 @@ cd F1-Analytics-Group
 
 Лёгкое добавление новых данных в БД
 
-🖼️ Примеры графиков
+##  Примеры графиков
 
 <img width="777" height="614" alt="image" src="https://github.com/user-attachments/assets/18a459b4-87c8-4775-9ad1-4c878e3e4ad5" />
 
 
-🔧 Технологии
+##  Технологии
 
 Python 3.10
 
@@ -48,5 +48,6 @@ SQLite + SQLAlchemy
 Pandas / Plotly Express
 
 OpenPyXL
+
 
 
