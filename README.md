@@ -28,7 +28,7 @@ F1-Analytics-Group/
 Клонировать репозиторий:
 
 ```bash
-git clone https://github.com/username/F1-Analytics-Group.git
+git clone https://github.com/aru-nur-def/F1-Analytics-Group-2.git
 cd F1-Analytics-Group
 ```
 
@@ -95,4 +95,5 @@ python analytics.py
 
 Aruzhan Saparkhankyzy  
 [231768@astanait.edu.kz]
+
 
