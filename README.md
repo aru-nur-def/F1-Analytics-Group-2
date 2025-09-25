@@ -43,7 +43,7 @@ python analytics.py
 Для демонстрации динамического обновления:
 
 python insert_demo.py
-python analytics.py
+python analytics.py ''
 
 
 ## 📊 Возможности
@@ -67,6 +67,7 @@ python analytics.py
 - **SQLite + SQLAlchemy**
 - **Pandas / Plotly Express**
 - **OpenPyXL**
+
 
 
 
