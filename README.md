@@ -45,6 +45,7 @@ python analytics.py
 python insert_demo.py
 python analytics.py
 
+
 ## 📊 Возможности
 
 - Построение графиков: **pie, bar, line, histogram, scatter**
@@ -66,6 +67,7 @@ python analytics.py
 - **SQLite + SQLAlchemy**
 - **Pandas / Plotly Express**
 - **OpenPyXL**
+
 
 
 
