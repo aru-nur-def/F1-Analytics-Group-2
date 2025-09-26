@@ -77,7 +77,8 @@ python analytics.py
 ##  Примеры графиков
 
 <img width="523" height="411" alt="image" src="https://github.com/user-attachments/assets/dc359c13-81f9-454a-aba7-3f77f76a93a1" />
-<img width="640" height="400" alt="image" src="https://github.com/user-attachments/assets/57d06897-0bf4-4ff7-9766-0f4dafdab231" />
+<img width="642" height="413" alt="image" src="https://github.com/user-attachments/assets/21ee133c-4178-47fc-be10-dee17a91e142" />
+
 
 
 ---
@@ -95,5 +96,6 @@ python analytics.py
 
 Aruzhan Saparkhankyzy  
 [231768@astanait.edu.kz]
+
 
 
