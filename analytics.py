@@ -12,6 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 from sqlalchemy import create_engine
+import matplotlib.ticker as ticker
 from config import DB_URL, CHARTS_FOLDER, EXPORTS_FOLDER
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import ColorScaleRule
@@ -28,6 +29,9 @@ def run_query(sql):
     print(f"Query returned {len(df):,} rows.")
     return df
 
+# --- Подключение к БД ---
+engine = create_engine("sqlite:///f1.db")
+
 # 1) Pie chart: distribution of race wins by constructor (2010-2020)
 pie_sql = """
 SELECT c.name AS constructor, COUNT(*) AS wins
@@ -40,13 +44,54 @@ GROUP BY c.name
 ORDER BY wins DESC;
 """
 pie_df = run_query(pie_sql)
+
 if not pie_df.empty:
-    fig = pie_df.set_index('constructor')['wins'].plot.pie(autopct='%1.1f%%', figsize=(8,8), title="Share of Race Wins by Constructor (2010-2020)").get_figure()
-    plt.ylabel('')
+    # --- Считаем доли ---
+    total = pie_df["wins"].sum()
+    pie_df["share"] = pie_df["wins"] / total
+
+    # --- Делим на большие и маленькие сегменты ---
+    large = pie_df[pie_df["share"] >= 0.01]   # ≥1%
+    small = pie_df[pie_df["share"] < 0.01]    # <1%
+
+    # --- Добавляем категорию "Other (<1%)" ---
+    if not small.empty:
+        other_row = pd.DataFrame({
+            "constructor": ["Other (<1%)"],
+            "wins": [small["wins"].sum()],
+            "share": [small["share"].sum()]
+        })
+        pie_plot_df = pd.concat([large, other_row], ignore_index=True)
+    else:
+        pie_plot_df = large
+
+    # --- Строим круговую диаграмму ---
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.pie(
+        pie_plot_df["wins"],
+        labels=pie_plot_df["constructor"],
+        autopct="%1.1f%%",
+        startangle=140
+    )
+    ax.set_title("Share of Race Wins by Constructor (2010-2020)")
+
+    # --- Если есть маленькие сегменты — таблица снизу ---
+    if not small.empty:
+        table_data = small[["constructor", "wins", "share"]].copy()
+        table_data["share"] = (table_data["share"] * 100).round(2).astype(str) + "%"
+        plt.table(
+            cellText=table_data.values,
+            colLabels=table_data.columns,
+            loc="bottom",
+            bbox=[0.0, -0.35, 1, 0.25]
+        )
+        plt.subplots_adjust(bottom=0.35)
+
+    # --- Сохраняем картинку ---
     path = os.path.join(CHARTS_FOLDER, "pie_wins_by_constructor_2010_2020.png")
     fig.savefig(path, bbox_inches='tight')
     plt.close(fig)
-    print(f"Saved pie chart: {path} — shows share of race wins by constructor 2010-2020.")
+    print(f"Saved pie chart: {path} — shows share of race wins by constructor 2010-2020 (with <1% grouped as 'Other').")
 
 # 2) Bar chart: Top 10 drivers by total points (all years)
 bar_sql = """
@@ -89,9 +134,7 @@ if not hbar_df.empty:
     fig.savefig(path, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved horizontal bar chart: {path} — shows average qualifying grid position per constructor in 2015.")
-
-# 4) Line chart: Points of season champion by year (2000-2020)
-# We compute per year total points per driver, then pick the top driver per year (champion) and plot their points.
+#4
 champ_sql = """
 SELECT ra.year, d.driverRef AS driver, SUM(r.points) AS total_points
 FROM results r
@@ -102,16 +145,37 @@ GROUP BY ra.year, d.driverRef
 ORDER BY ra.year, total_points DESC;
 """
 champ_df = run_query(champ_sql)
+
 if not champ_df.empty:
     # pick champion per year (driver with max total_points)
-    champ_per_year = champ_df.sort_values(['year','total_points'], ascending=[True, False]).groupby('year').first().reset_index()
-    ax = champ_per_year.plot.line(x='year', y='total_points', marker='o', title='Season Champion Points by Year (2000-2020)', figsize=(10,6))
+    champ_per_year = (
+        champ_df.sort_values(['year','total_points'], ascending=[True, False])
+        .groupby('year')
+        .first()
+        .reset_index()
+    )
+
+    # преобразуем year в int
+    champ_per_year["year"] = champ_per_year["year"].astype(int)
+
+    ax = champ_per_year.plot.line(
+        x='year',
+        y='total_points',
+        marker='o',
+        title='Season Champion Points by Year (2000-2020)',
+        figsize=(10,6)
+    )
     ax.set_ylabel('Points')
+
+    # 👉 делаем ось X только с целыми числами (убираем .0)
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+
     path = os.path.join(CHARTS_FOLDER, "line_champion_points_2000_2020.png")
     fig = ax.get_figure()
     fig.savefig(path, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved line chart: {path} — shows season champion total points per year (2000-2020).")
+
 
 # 5) Histogram: distribution of lap times (milliseconds) for 2015-2019
 hist_sql = """
